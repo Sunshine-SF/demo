@@ -30,24 +30,24 @@
                     </div>
                 </div>
 
-               <!-- <div class="layui-inline">
+                <div class="layui-inline">
                     <label class="layui-form-label">复查时间</label>
                     <div class="layui-input-inline">
                         <input type="text" id="reviewTime" autocomplete="off" class="layui-input">
                     </div>
-                </div>-->
+                </div>
                 <div class="layui-inline">
                     <label class="layui-form-label">手术天数</label>
                     <div class="layui-input-inline">
                         <input type="text" id="ssDay" autocomplete="off" class="layui-input">
                     </div>
                 </div>
-                <!--<div class="layui-inline">
+                <div class="layui-inline">
                     <label class="layui-form-label">复查天数</label>
                     <div class="layui-input-inline">
                         <input type="text" id="reviewDay" autocomplete="off" class="layui-input">
                     </div>
-                </div>-->
+                </div>
                 <button type="button" class="layui-btn btnSelect" onclick="queryInfo()">查询</button>
             </div>
         </div>
@@ -209,29 +209,29 @@
     function queryInfo() {
         var username = document.getElementById("username").value;
         var recoveryTime = document.getElementById("recoveryTime").value;
-        /*var reviewTime = document.getElementById("reviewTime").value;
-        var reviewDay = document.getElementById("reviewDay").value;*/
+       var reviewTime = document.getElementById("reviewTime").value;
+        var reviewDay = document.getElementById("reviewDay").value;
         var ssDay = document.getElementById("ssDay").value;
 
 
         layui.use(['layer', 'form', 'table', 'laydate'], function () {
             var layer = layui.layer
                 , table = layui.table;
-         /*   console.log(reviewDay)
-            if (reviewDay != '' && isNaN(reviewDay)) {
+            console.log(reviewDay)
+           /* if (reviewDay != '' && isNaN(reviewDay)) {
                 layer.msg("距复查剩余天数必须为数字")
                 return;
-            }*/
+            }
             if ( ssDay != '' && isNaN(ssDay)) {
                 layer.msg("距手术剩余天数必须为数字")
                 return;
-            }
+            }*/
             table.render({
                 elem: '#demo'
                 ,
                 height: 650
                 ,
-                url: '/selectAll?username=' + username + '&recoveryTime=' + recoveryTime /*+ '&reviewTime=' + reviewTime + '&reviewDay=' + reviewDay*/ + '&ssDay=' + ssDay//数据接口
+                url: '/selectAll?username=' + username + '&recoveryTime=' + recoveryTime + '&reviewTime=' + reviewTime + '&reviewDay=' + reviewDay + '&ssDay=' + ssDay//数据接口
                 , id: 'user'
                 , title: '用户表'
                 , toolbar: 'default'

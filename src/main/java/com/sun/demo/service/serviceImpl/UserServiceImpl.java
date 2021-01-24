@@ -42,6 +42,9 @@ public class UserServiceImpl implements UserService {
         List<Review> reViews = userVO.getReViews();
         for (Review reView : reViews) {
             reView.setUserId(user.getId());
+            if(StringUtils.isEmpty(reView.getId())){
+                reViewDao.insert(reView);
+            }
             reViewDao.updateById(reView);
         }
         return 1;
@@ -86,14 +89,20 @@ public class UserServiceImpl implements UserService {
         if (!StringUtils.isEmpty(recoveryTime)) {
             sql += "and date(recovery_Time) = STR_TO_DATE('" + recoveryTime + "','%Y-%m-%d')";
         }
-      /*  if (!StringUtils.isEmpty(reviewTime)) {
-            sql += " and review_Time = STR_TO_DATE('" + reviewTime + "','%Y-%m-%d')";
+        if (!StringUtils.isEmpty(reviewTime)) {
+            sql += " and id in (select t.user_id from (SELECT r1.user_id,"+
+                   " min(r1.review_date) lastdate FROM review r1"+
+                   " WHERE now() < r1.review_date group by  r1.user_id) t where date(t.lastdate) " +
+                    " = STR_TO_DATE('"+reviewTime+"', '%Y-%m-%d'))";
         }
         if (!StringUtils.isEmpty(reviewDay)) {
-            sql += " and 0 <= datediff(NOW(),review_Time) <="+Integer.parseInt(reviewDay);
-        }*/
+            sql +=  " and id in (select t.user_id from (SELECT r1.user_id,\n" +
+                    " min(r1.review_date) lastdate FROM review r1\n" +
+                    " WHERE now() < r1.review_date group by  r1.user_id) t where \n" +
+                    " datediff(t.lastdate,NOW()) between 0 and "+Integer.parseInt(reviewDay)+")";
+        }
         if (!StringUtils.isEmpty(ssDay)) {
-            sql += " and 0 <= datediff(NOW(),review_Time) <="+Integer.parseInt(ssDay);
+            sql += " and datediff(NOW(),review_Time) between 0 and "+Integer.parseInt(ssDay);
         }
         return userDao.queryList(sql);
     }
