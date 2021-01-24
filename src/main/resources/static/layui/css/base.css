@@ -1,0 +1,49 @@
+html,body {
+    overflow: hidden;
+}
+.main {
+    padding: 14px;
+    background-color: #F3F9FF;
+    overflow: hidden;
+}
+.content {
+    padding: 20px;
+    background-color: #fff;
+}
+.layui-form-label {
+    /* background-color: #3CA2E0; */
+    color: #333;
+    font-size: 14px;
+    text-align: center;
+    margin-right: 10px;
+    height: 34px;
+    padding: 0 ;
+    line-height: 34px;
+    width: auto;
+}
+.layui-input-inline {
+    margin-right: 20px;
+    width: 200px;
+}
+.layui-inline {
+    display: flex;
+}
+.layui-input-block {
+    margin-left: 0;
+}
+.userMain {
+    display: flex;
+    justify-content: space-between;
+}
+.layui-input, .layui-select, .layui-textarea {
+    height: 34px;
+}
+.btnSelect {
+    float: right;
+}
+.userMessage {
+    display: flex;
+}
+/*.layui-table-body {
+        height: inherit!important;
+}*/

@@ -1,0 +1,105 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../layui/css/layui.css" />
+<script type="text/javascript" src="../js/jquery-1.12.2.min.js"></script>
+<script type="text/javascript" src="../layui/layui.js"></script>
+<style type="text/css">
+	.layui-table-page{
+		background-color: white;
+	}
+</style>
+<title>通知后台管理</title>
+</head>
+
+<body bgcolor="#d6cbcd">
+<br>
+<h1 align="center">通知管理</h1>
+<button type="button" class="layui-btn layui-btn-normal" onclick="add()">发布通知</button>	
+<table class="layui-hide" id="demo" lay-filter="test"></table>
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+</body>
+
+
+<script type="text/javascript">
+layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider'], function(){
+	  var laydate = layui.laydate //日期
+	  ,laypage = layui.laypage //分页
+	  ,layer = layui.layer //弹层
+	  ,table = layui.table //表格
+	  ,carousel = layui.carousel //轮播
+	  ,upload = layui.upload //上传
+	  ,element = layui.element //元素操作
+	  ,slider = layui.slider //滑块
+	  //渲染表格
+	  table.render({
+		    elem: '#demo'
+		    ,url: '/sunfan/notice/notice_findByPage' //数据接口
+		    ,title: '新闻信息表'
+		   ,page:{ //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                      layout: ['limit', 'count', 'prev', 'page', 'next'] //自定义分页布局
+                      ,first: true //不显示首页
+                       ,last: true //不显示尾页
+					  ,limit:6  // 设置每页显示几条记录
+					  ,limits:[6, 5, 10] // 设置每页显示条数的select控件的选项
+
+             }
+		    ,cols: [[ //表头
+		      {field: 'noticeID', title: 'ID', width:80, sort: true, fixed: 'left'}
+		      ,{field: 'number', title: '消息号', width:220}
+		      ,{field: 'username', title: '发布人', width: 210}
+		      ,{field: 'title', title: '标题', width: 140 }
+		      ,{field: 'noticeContent', title: '内容', width:140}
+		      ,{field: 'submitTime', title: '发布时间', sort: true,width: 127}
+		      ,{fixed: 'right',title: '操作', width: 150, align:'center', toolbar: '#barDemo'}
+		    ]]
+		  });
+	  
+	
+	  
+	//监听行工具事件
+	  table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+	    var data = obj.data //获得当前行数据
+	    ,layEvent = obj.event; //获得 lay-event 对应的值
+	    if(layEvent === 'del'){
+	      layer.confirm('真的删除么', function(index){
+	        obj.del(); //删除对应行（tr）的DOM结构
+	        layer.close(index);
+	        //向服务端发送删除指令
+	        $.ajax({
+	        	type:"get",
+	        	url:"/sunfan/notice/notice_delNews?id="+data.noticeID,
+	        	dataType:"json",
+	        	success:function(datas){
+	        		if(datas.code==1){
+	        			layer.msg("删除成功");
+	        			table.reload('demo');
+	        		}else{
+		        		alert("删除失败")
+		        	}
+	        	}
+	        })
+	      });
+	    } else if(layEvent === 'edit'){
+	    	layer.open({
+                type: 2 //此处以iframe举例 可以弹出一个页面
+                ,title:'修改此通知'
+                ,area: ['800px', '420px']
+                ,content: 'user_edit.html?id='+data.noticeID
+            });
+	    }
+	  });
+	 })
+	  function add(){
+			  layer.open({
+	              type: 2 //此处以iframe举例 可以弹出一个页面
+	              ,title:'发布通知'
+	              ,area: ['800px', '420px']
+	              ,content: 'userAdd.html'
+	          });
+		  }
+</script>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--    <style>
+        .layui-table-main {
+            height: 85vh!important;
+        }
+        </style>-->
+</head>
+<link rel="stylesheet" href="layui/css/layui.css">
+<body>
+<div class="main">
+    <div class="content">
+        <div class="userMain">
+            <div class="userMessage" style="margin-top: 50px;margin-bottom: 20px;">
+                <h1 align="center">title</h1>
+                <div class="layui-inline">
+                    <label class="layui-form-label">姓名</label>
+                    <div class="layui-input-inline">
+                        <input type="tel" id="username" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">手术时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="recoveryTime" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+               <!-- <div class="layui-inline">
+                    <label class="layui-form-label">复查时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="reviewTime" autocomplete="off" class="layui-input">
+                    </div>
+                </div>-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">手术天数</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="ssDay" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <!--<div class="layui-inline">
+                    <label class="layui-form-label">复查天数</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="reviewDay" autocomplete="off" class="layui-input">
+                    </div>
+                </div>-->
+                <button type="button" class="layui-btn btnSelect" onclick="queryInfo()">查询</button>
+            </div>
+        </div>
+        <span style="display: block"></span>
+        <table class="layui-hide" id="demo" style="height:80vh;" lay-filter="test"></table>
+    </div>
+</div>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+
+</script>
+
+<script src="layui/layui.js" charset="utf-8"></script>
+<script src="layui/jquery-1.6.1.min.js" charset="utf-8"></script>
+<script>
+
+    layui.use(['layer', 'form', 'table', 'laydate'], function () {
+        var layer = layui.layer
+            , table = layui.table
+            , laydate = layui.laydate;
+
+        laydate.render({
+            elem: '#recoveryTime'
+        });
+        laydate.render({
+            elem: '#reviewTime',
+        });
+        table.render({
+            elem: '#demo'
+            , height: 650
+            , url: '/selectAll'//数据接口
+            , title: '用户表'
+            , toolbar: 'default'
+            , totalRow: true
+            , id: 'user'
+            , page: true
+            , cols: [[ //表头
+                {type: 'checkbox', fixed: 'left'}
+                , {field: 'username', title: '姓名', width: 100, align: 'center'}
+                , {field: 'age', title: '年龄', width: 80, align: 'center'}
+                , {field: 'sex', title: '性别', width: 80, align: 'center'}
+                , {field: 'tel', title: '联系方式', width: 180, align: 'center'}
+                , {field: 'recoveryTime', title: '手术时间', width: 140, align: 'center'}
+                , {field: 'operate', title: '手术方式', width: 180, align: 'center'}
+                , {field: 'lastTime', title: '上次复查时间', width: 140, align: 'center'}
+                , {field: 'lastMatter', title: '上次复查情况', width: 150, align: 'center'}
+                , {field: 'nextTime', title: '下次复查时间', width: 140, align: 'center'}
+                , {field: 'pharmacy', title: '用药', width: 235}
+                , {field: 'specialItem', title: '特殊事项', width: 240}
+                , {fixed: 'right', width: 165, align: 'center', toolbar: '#barDemo'}
+            ]]
+        });
+
+        //监听头工具栏事件
+        table.on('toolbar(test)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id)
+                , data = checkStatus.data; //获取选中的数据
+            switch (obj.event) {
+                case 'add':
+                    add();
+                    break;
+                case 'update':
+                    if (data.length === 0) {
+                        layer.msg('请选择一条数据');
+                    } else if (data.length > 1) {
+                        layer.msg('只能同时编辑一个');
+                    } else {
+                        layer.open({
+                            type: 2 //此处以iframe举例 可以弹出一个页面
+                            , title: '修改信息'
+                            , area: ['600px', '700px']
+                            , content: 'user_edit.html?id=' + checkStatus.data[0].id
+                        });
+                    }
+                    break;
+                case 'delete':
+                    if (data.length === 0) {
+                        layer.msg('请选择一条数据');
+                    } else {
+                        del();
+
+                    }
+                    break;
+            }
+            ;
+        });
+
+
+        //监听行工具事件
+        table.on('tool(test)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data //获得当前行数据
+                , layEvent = obj.event; //获得 lay-event 对应的值
+            if (layEvent === 'del') {
+                layer.confirm('真的删除行么', function (index) {
+                    obj.del(); //删除对应行（tr）的DOM结构
+                    layer.close(index);
+                    //向服务端发送删除指令
+                    console.log(data)
+                    $.ajax({
+                        type: "get",
+                        url: "/del/" + data.id,
+                        dataType: "json",
+                        success: function (datas) {
+                            layer.msg("删除成功");
+                            table.reload('demo');
+                        }
+                    })
+                });
+            } else if (layEvent === 'edit') {
+                layer.open({
+                    type: 2 //此处以iframe举例 可以弹出一个页面
+                    , title: '修改信息'
+                    , area: ['500px', '700px']
+                    , content: 'user_edit.html?id=' + data.id
+                });
+            }
+        });
+    });
+
+    //新增
+    function add() {
+        layer.open({
+            type: 2 //此处以iframe举例 可以弹出一个页面
+            , title: '添加信息'
+            , area: ['500px', '700px']
+            , content: 'user_add.html'
+        });
+    }
+
+    //删除
+    function del() {
+        layui.use(['layer', 'table'], function () {
+            var layer = layui.layer
+                , table = layui.table
+            var selectData = layui.table.checkStatus('user').data;
+            if (selectData.length == 0) {
+                layer.msg("请选择至少一条数据！")
+            } else {
+                layer.confirm('真的删除信息么', function () {
+                    $.ajax({
+                        url: "/delUser",
+                        data: JSON.stringify(selectData),
+                        type: "post",
+                        dataType: "json",
+                        contentType: "application/json",
+                        success: function () {
+                            layer.msg("删除成功");
+                            queryInfo();
+                        }
+                    })
+                });
+            }
+        });
+    }
+
+    //查询
+    function queryInfo() {
+        var username = document.getElementById("username").value;
+        var recoveryTime = document.getElementById("recoveryTime").value;
+        /*var reviewTime = document.getElementById("reviewTime").value;
+        var reviewDay = document.getElementById("reviewDay").value;*/
+        var ssDay = document.getElementById("ssDay").value;
+
+
+        layui.use(['layer', 'form', 'table', 'laydate'], function () {
+            var layer = layui.layer
+                , table = layui.table;
+         /*   console.log(reviewDay)
+            if (reviewDay != '' && isNaN(reviewDay)) {
+                layer.msg("距复查剩余天数必须为数字")
+                return;
+            }*/
+            if ( ssDay != '' && isNaN(ssDay)) {
+                layer.msg("距手术剩余天数必须为数字")
+                return;
+            }
+            table.render({
+                elem: '#demo'
+                ,
+                height: 650
+                ,
+                url: '/selectAll?username=' + username + '&recoveryTime=' + recoveryTime /*+ '&reviewTime=' + reviewTime + '&reviewDay=' + reviewDay*/ + '&ssDay=' + ssDay//数据接口
+                , id: 'user'
+                , title: '用户表'
+                , toolbar: 'default'
+                , totalRow: true
+                , page: true
+                , cols: [[ //表头
+                    {type: 'checkbox', fixed: 'left'}
+                    , {field: 'username', title: '姓名', width: 100, align: 'center'}
+                    , {field: 'age', title: '年龄', width: 80, align: 'center'}
+                    , {field: 'sex', title: '性别', width: 80, align: 'center'}
+                    , {field: 'tel', title: '联系方式', width: 180, align: 'center'}
+                    , {field: 'recoveryTime', title: '手术时间', width: 140, align: 'center'}
+                    , {field: 'operate', title: '手术方式', width: 180, align: 'center'}
+                    , {field: 'lastTime', title: '上次复查时间', width: 140, align: 'center'}
+                    , {field: 'lastMatter', title: '上次复查情况', width: 150, align: 'center'}
+                    , {field: 'nextTime', title: '下次复查时间', width: 140, align: 'center'}
+                    , {field: 'pharmacy', title: '用药', width: 235}
+                    , {field: 'specialItem', title: '特殊事项', width: 240}
+                    , {fixed: 'right', width: 165, align: 'center', toolbar: '#barDemo'}
+                ]]
+            });
+        });
+    }
+</script>
+</body>
+</html>

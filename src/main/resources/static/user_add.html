@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="layui/css/layui.css"/>
+    <script type="text/javascript" src="layui/jquery-1.6.1.min.js"></script>
+    <script type="text/javascript" src="./layui/WdatePicker.js"></script>
+    <title>增加学生</title>
+    <style></style>
+</head>
+<body>
+<div class="layui-tab layui-tab-brief" lay-filter="demo">
+    <ul class="layui-tab-title">
+        <li>用户信息</li>
+        <li>复查时间</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <form class="layui-form" action="" lay-filter="example">
+                <input type="text" name="id" hidden="hidden">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">姓名</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="username" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">年龄</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="age" lay-verify="required|number" lay-reqtext="年龄是必填项，岂能为空？"
+                               autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">联系方式</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="tel" lay-verify="required|phone" lay-reqtext="联系方式是必填项，岂能为空？"
+                               autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">手术方式</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="operate" lay-verify="required" lay-reqtext="手术方式是必填项，岂能为空？"
+                               autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">性别</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="sex" value="男" title="男">
+                        <input type="radio" name="sex" value="女" title="女">
+                    </div>
+                </div>
+                <div class="layui-form-item" style="display: none">
+                    <div class="layui-input-block">
+                        <input type="text" name="" id="reViews" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">手术时间</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="recoveryTime" id="recoveryTime" autocomplete="off" lay-verify="date"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用药</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="pharmacy" lay-verify="required" lay-reqtext="用药是必填项，岂能为空？"
+                               autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">特殊事项</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="specialItem" lay-verify="required" lay-reqtext="特殊事项是必填项，岂能为空？"
+                               autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <br>
+                        <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="layui-tab-item">
+            <table id="table" style="display: table;width:100%">
+                <thead>
+                <tr>
+                    <th class="center" id="dbz" style="width:5%">
+                        <div>
+                            <img class="upload" src="./img/more2.png" onclick="allocationZcqd()">
+                        </div>
+                    </th>
+                    <th style="width:10%;">
+                        <div>复查次数</div>
+                    </th>
+                    <th style="width: 25%;">
+                        <div>复查时间</div>
+                    </th>
+                    <th style="width: 20%;">
+                        <div>复查状态</div>
+                    </th>
+                </tr>
+                </thead>
+                <tbody id="appende">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src="layui/layui.all.js"></script>
+<script type="text/javascript">
+
+
+    layui.use(['form', 'layedit', 'laydate'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , layedit = layui.layedit
+            , laydate = layui.laydate;
+        //日期
+        laydate.render({
+            elem: '#recoveryTime'
+        });
+
+        laydate.render({
+            elem: '#reviewIime'
+        });
+        //监听提交
+        form.on('submit(demo1)', function (data1) {
+            //复查时间数句
+            var len = $("#table").find("tr").length;
+            var reViews = new Array();
+            for (var i = 1; i < len; i++) {
+                var id = $("#table").find("tr").eq(i).find("td").eq(1).find("input").val();
+                var reviewTimes = $("#table").find("tr").eq(i).find("td").eq(2).find("input").val();
+                var reviewDate = $("#table").find("tr").eq(i).find("td").eq(3).find("input").val();
+                var flag = $("#table").find("tr").eq(i).find("td").eq(4).find("select").val();
+                var babljg = {"id":id,"reviewTimes": reviewTimes, "reviewDate": reviewDate, "flag": flag}
+                reViews[i - 1] = babljg;
+            }
+            var mainInfo =data1.field;
+            mainInfo.reViews = reViews;
+            var datas = JSON.stringify(mainInfo);
+            console.log(datas)
+            $.ajax({
+                type: "post",
+                url: "/addUser",
+                data: datas,//通过dsata.field 的到提交的数据
+                dataType: "json",
+                contentType: "application/json",
+                success: function (data) {
+                    var t = parent.layui.table;
+                    t.reload('demo');
+                    var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                    parent.layer.close(index); //再执行关闭
+                    layer.msg("添加成功")
+                }
+            })
+            return false;
+        });
+    });
+
+    //删除
+    function scSy(obj) {
+        $(obj).parent().parent().parent().remove();
+    }
+
+    //新增
+    function allocationZcqd() {
+        var str = "";
+        str += "<tr class='tr1'>"
+        str += "<td><div align='center'><img src='./img/remove.png'  onclick='scSy(this)' alt='删除'></div></td>";
+        str += "<td style='display: none' ><input type='text' id='id'></td>";
+        str += "<td style='text-align:left'><input type='text' id='reviewTimes' ></td>";
+        str += "<td style='text-align:left'><input type='date' id='reviewDate' ></td>";
+        str += "<td style='text-align:left'>" +
+            " <select name=\"flag\">" +
+            " <option value=\"0\" selected=\"selected\">未复查</option>" +
+            " <option value=\"1\">已复查</option>" +
+            " </select></td>";
+        str += "</tr>";
+        $("#appende").append(str);
+    }
+
+
+</script>
+</html>
