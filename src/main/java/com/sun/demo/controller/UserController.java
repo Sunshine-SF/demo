@@ -105,7 +105,7 @@ public class UserController {
                     if ("0".equals(review1.getFlag())) {
                         user.setLastMatter("未复查");
                     } else {
-                        user.setLastMatter("已复查");
+                        user.setLastMatter(review1.getRemark());
                     }
                 }
             } else {
@@ -120,7 +120,7 @@ public class UserController {
                     if ("0".equals(review.getFlag())) {
                         user.setLastMatter("未复查");
                     } else {
-                        user.setLastMatter("已复查");
+                        user.setLastMatter(review.getRemark());
                     }
                 }
             }

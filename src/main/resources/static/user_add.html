@@ -6,7 +6,11 @@
     <script type="text/javascript" src="layui/jquery-1.6.1.min.js"></script>
     <script type="text/javascript" src="./layui/WdatePicker.js"></script>
     <title>增加学生</title>
-    <style></style>
+    <style>
+        button, input, optgroup, option, select, textarea {
+            width: 150px;
+        }
+    </style>
 </head>
 <body>
 <div class="layui-tab layui-tab-brief" lay-filter="demo">
@@ -93,7 +97,7 @@
             </form>
         </div>
         <div class="layui-tab-item">
-            <table id="table" style="display: table;width:100%">
+            <table id="table" style="display: table">
                 <thead>
                 <tr>
                     <th class="center" id="dbz" style="width:5%">
@@ -101,13 +105,16 @@
                             <img class="upload" src="./img/more2.png" onclick="allocationZcqd()">
                         </div>
                     </th>
-                    <th style="width:10%;">
+                    <th>
                         <div>复查次数</div>
                     </th>
-                    <th style="width: 25%;">
+                    <th>
                         <div>复查时间</div>
                     </th>
-                    <th style="width: 20%;">
+                    <th>
+                        <div>复查说明</div>
+                    </th>
+                    <th >
                         <div>复查状态</div>
                     </th>
                 </tr>
@@ -145,8 +152,9 @@
                 var id = $("#table").find("tr").eq(i).find("td").eq(1).find("input").val();
                 var reviewTimes = $("#table").find("tr").eq(i).find("td").eq(2).find("input").val();
                 var reviewDate = $("#table").find("tr").eq(i).find("td").eq(3).find("input").val();
-                var flag = $("#table").find("tr").eq(i).find("td").eq(4).find("select").val();
-                var babljg = {"id":id,"reviewTimes": reviewTimes, "reviewDate": reviewDate, "flag": flag}
+                var remark = $("#table").find("tr").eq(i).find("td").eq(4).find("input").val();
+                var flag = $("#table").find("tr").eq(i).find("td").eq(5).find("select").val();
+                var babljg = {"id":id,"reviewTimes": reviewTimes, "reviewDate": reviewDate, "flag": flag,"remark":remark}
                 reViews[i - 1] = babljg;
             }
             var mainInfo =data1.field;
@@ -182,10 +190,11 @@
         str += "<tr class='tr1'>"
         str += "<td><div align='center'><img src='./img/remove.png'  onclick='scSy(this)' alt='删除'></div></td>";
         str += "<td style='display: none' ><input type='text' id='id'></td>";
-        str += "<td style='text-align:left'><input type='text' id='reviewTimes' ></td>";
-        str += "<td style='text-align:left'><input type='date' id='reviewDate' ></td>";
-        str += "<td style='text-align:left'>" +
-            " <select name=\"flag\">" +
+        str += "<td style='text-align:left;'><input type='text' id='reviewTimes' style='width: 70px'></td>";
+        str += "<td style='text-align:left;'><input type='date' id='reviewDate' style='width: 120px'></td>";
+        str += "<td style='text-align:left''><input type='text' id='remark' style='width: 180px'></td>"
+        str += "<td style='text-align:left;'>" +
+            " <select name=\"flag\" style='width:80px'>" +
             " <option value=\"0\" selected=\"selected\">未复查</option>" +
             " <option value=\"1\">已复查</option>" +
             " </select></td>";

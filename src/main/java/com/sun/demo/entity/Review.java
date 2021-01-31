@@ -17,4 +17,5 @@ public class Review {
     private Date reviewDate;
     private int reviewTimes;
     private String flag;
+    private String remark;
 }
